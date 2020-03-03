@@ -8,7 +8,6 @@ const format = (stones: number) => {
 export class Game {
   board: Board
   player: string = 'one'
-  status = null
   current_player_store = document.querySelector('.store.player-' + this.player + ' p')
   current_player_pits = document.querySelectorAll('.row.player-' + this.player + ' .pit p')
 
@@ -53,7 +52,7 @@ export class Game {
 	public do_player_turn(pit: number) {
 
 		// perform the player's action
-		var turn_over = this.board.move_stones(pit)
+		let turn_over = this.board.move_stones(pit)
 
 		// make sure that a player hasn't run out of stones
 		if (this.check_game_over()) {
@@ -79,7 +78,7 @@ export class Game {
 		this.refresh_queries()
 		this.draw_all_stones()
 
-		var player = this.player
+		let player = this.player
 		setTimeout(function () {
       document.body.setAttribute('data-player', player)
       let current_player = document.querySelector('.current-player')
@@ -94,14 +93,14 @@ export class Game {
 	 * @returns {Boolean} Whether the game is over
 	 */
 	public check_game_over() {
-		var winner = this.board.check_winner()
+		let winner = this.board.check_winner()
 
 		if (winner < 0) {
 			return false
 		}
 
 		document.body.classList.add('game-over')
-		var status = document.querySelector('.status')
+		let status = document.querySelector('.status')
 
     // Determine which player holds the most stones
     if (status){
@@ -129,7 +128,7 @@ export class Game {
     if(this.other_player_store)
       this.other_player_store.textContent = format(this.board.other_store)
 
-    for (var pit = 0; pit < 6; pit++) {
+    for (let pit = 0; pit < 6; pit++) {
         this.current_player_pits[pit].textContent = format(this.board.current_pits[pit])
         this.other_player_pits[pit].textContent = format(this.board.other_pits[pit])
     }

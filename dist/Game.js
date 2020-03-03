@@ -7,7 +7,6 @@ var format = function (stones) {
 var Game = (function () {
     function Game() {
         this.player = 'one';
-        this.status = null;
         this.current_player_store = document.querySelector('.store.player-' + this.player + ' p');
         this.current_player_pits = document.querySelectorAll('.row.player-' + this.player + ' .pit p');
         this.other_player_store = document.querySelector('.store.player-' + this.get_other_player() + ' p');

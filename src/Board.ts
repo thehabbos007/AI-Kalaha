@@ -26,11 +26,11 @@ export class Board {
 	 * Exchange the players' positions on the board
 	 */
   public flip_board() {
-    var current_pits = this.current_pits
+    let current_pits = this.current_pits
     this.current_pits = this.other_pits
     this.other_pits = current_pits
 
-    var current_store = this.current_store
+    let current_store = this.current_store
     this.current_store = this.other_store
     this.other_store = current_store
   }
@@ -104,7 +104,7 @@ export class Board {
     }
 
     // take stones out of pit
-    var stones = this.get_stones(pit);
+    let stones = this.get_stones(pit);
     this.set_stones(pit, 0);
     this.game.draw_stones(pit);
 
@@ -122,7 +122,7 @@ export class Board {
     }
 
     // Invert the pit number (number of opposite pit in opponent's row)
-    var inverse = 5 - pit;
+    let inverse = 5 - pit;
 
     // Check for capture
     if (pit < 6 && this.current_pits[pit] === 1 && this.other_pits[inverse] > 0) {
@@ -154,12 +154,12 @@ export class Board {
      * @param {Array} pits The pits to check
      * @return {Boolean} true all of the pits contain no stones
      */
-    var is_row_empty = function (pits: number[]) {
+    let is_row_empty = function (pits: number[]) {
       return pits.every((stones: number) => stones === 0);
     };
 
-    var current_player_out = is_row_empty(this.current_pits);
-    var other_player_out = is_row_empty(this.other_pits);
+    let current_player_out = is_row_empty(this.current_pits);
+    let other_player_out = is_row_empty(this.other_pits);
 
     // the game is not over if neither player has an empty row
     if (!current_player_out && !other_player_out) {
@@ -167,7 +167,7 @@ export class Board {
     }
 
     // Move the stones remaining in a player's row into their store
-    var pit;
+    let pit;
 
     if (current_player_out && !other_player_out) {
       for (pit = 0; pit < 6; pit++) {
