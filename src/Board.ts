@@ -1,13 +1,11 @@
-import {Game} from "./Game";
+import {Game} from './Game';
 /**
  * Manages the mancala board
  */
 export class Board {
   game: Game
   current_pits: number[]
-  other_pits: number[]
-  current_store: number
-  other_store: number
+  turn_player_1: boolean;
 
 	/**
 	 * Initialise class
@@ -15,24 +13,8 @@ export class Board {
 	 */
   constructor(game: Game) {
     this.game = game
-
-    this.current_pits = [4, 4, 4, 4, 4, 4]
-    this.other_pits = [4, 4, 4, 4, 4, 4]
-    this.current_store = 0
-    this.other_store = 0
-  }
-
-	/**
-	 * Exchange the players' positions on the board
-	 */
-  public flip_board() {
-    let current_pits = this.current_pits
-    this.current_pits = this.other_pits
-    this.other_pits = current_pits
-
-    let current_store = this.current_store
-    this.current_store = this.other_store
-    this.other_store = current_store
+    this.current_pits = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]
+    this.turn_player_1 = true;
   }
 
 	/**
@@ -41,18 +23,7 @@ export class Board {
 	 * @return {Number}     The amount of stones
 	 */
   public get_stones(pit: number) {
-
-    if (pit === 6) {
-      return this.current_store
-    } else if (pit === 13) {
-      return this.other_store
-    } else if (pit < 6) {
-      return this.current_pits[pit]
-    } else if (pit > 6) {
-      return this.other_pits[pit - 7]
-    }
-
-    return NaN
+    return this.current_pits[pit];
   }
 
 	/**
@@ -61,16 +32,7 @@ export class Board {
 	 * @param {Number} stones The amount of stones
 	 */
   public set_stones(pit: number, stones: number) {
-
-    if (pit === 6) {
-      this.current_store = stones
-    } else if (pit === 13) {
-      this.other_store = stones
-    } else if (pit < 6) {
-      this.current_pits[pit] = stones
-    } else if (pit > 6) {
-      this.other_pits[pit - 7] = stones
-    }
+    this.current_pits[pit] = stones
   }
 
 	/**
@@ -79,16 +41,7 @@ export class Board {
 	 * @param {Number} stones The amount of stones
 	 */
   public add_stones(pit: number, stones: number) {
-
-    if (pit === 6) {
-      this.current_store += stones
-    } else if (pit === 13) {
-      this.other_store += stones
-    } else if (pit < 6) {
-      this.current_pits[pit] += stones
-    } else if (pit > 6) {
-      this.other_pits[pit - 7] += stones
-    }
+    this.current_pits[pit] += stones;
   }
 
   /**
@@ -97,7 +50,7 @@ export class Board {
    * @return {Boolean} Whether the user's turn has ended
    */
   public move_stones(pit: number) {
-
+    const current_store = this.get_store(this.turn_player_1)
     // return if pit has no stones
     if (this.get_stones(pit) < 1) {
       return false;
@@ -122,18 +75,18 @@ export class Board {
     }
 
     // Invert the pit number (number of opposite pit in opponent's row)
-    let inverse = 5 - pit;
+    const inverse = pit + 7 % this.current_pits.length
 
     // Check for capture
-    if (pit < 6 && this.current_pits[pit] === 1 && this.other_pits[inverse] > 0) {
+    if (pit < 6 && this.current_pits[pit] === 1 && this.current_pits[inverse] > 0) {
 
       // Transfer this pit's stones along with opposite pit's stones to store
-      this.current_store += this.other_pits[inverse] + 1;
+      this.current_pits[current_store] += this.current_pits[inverse] + 1;
       this.game.draw_stones(6);
 
       // Clear the pits
       this.current_pits[pit] = 0;
-      this.other_pits[inverse] = 0;
+      this.current_pits[inverse] = 0;
       this.game.draw_stones(pit);
       this.game.draw_stones(12 - pit);
     }
@@ -142,11 +95,34 @@ export class Board {
     return pit !== 6;
   }
 
+  public get_store(player_turn: boolean): number {
+    const half = (this.current_pits.length / 2) - 1
+    return player_turn ? half : half * 2 + 1
+  }
+
+  public get_side_length() {
+    return this.current_pits.length / 2 - 1
+  }
 
   /**
-  * Check if a player has won
-  * @return {Number} -1 for no win, 0 for draw, 1 for player one win, 2 for player two win
-  */
+   * Returns an array of bounding indicies for each player's board
+   */
+  public get_board_index(board: number[]): number[] {
+      return [0, this.get_side_length(),
+             this.get_side_length()+1, this.current_pits.length-1]
+  }
+
+  public get_board_slice(player_turn: boolean, board: number[]) : number[] {
+    return player_turn
+      ? board.slice(0, this.get_side_length())
+      : board.slice(this.get_side_length()+1, this.current_pits.length-1)
+  }
+
+
+  /**
+   * Check if a player has won
+   * @return {Number} -1 for no win, 0 for draw, 1 for player one win, 2 for player two win
+   */
   public check_winner() {
 
     /**
@@ -154,46 +130,47 @@ export class Board {
      * @param {Array} pits The pits to check
      * @return {Boolean} true all of the pits contain no stones
      */
-    let is_row_empty = function (pits: number[]) {
-      return pits.every((stones: number) => stones === 0);
+    const is_row_empty = (player: boolean) => {
+      return this.get_board_slice(player, this.current_pits)
+                 .every((stones: number) => stones === 0);
     };
 
-    let current_player_out = is_row_empty(this.current_pits);
-    let other_player_out = is_row_empty(this.other_pits);
+    const player_1_out = is_row_empty( this.turn_player_1);
+    const player_2_out   = is_row_empty(!this.turn_player_1);
 
     // the game is not over if neither player has an empty row
-    if (!current_player_out && !other_player_out) {
+    if (!player_1_out && !player_2_out) {
       return -1;
     }
 
     // Move the stones remaining in a player's row into their store
     let pit;
+    const [p1_lower, p1_upper, p2_lower, p2_upper] = this.get_board_index(this.current_pits)
 
-    if (current_player_out && !other_player_out) {
-      for (pit = 0; pit < 6; pit++) {
-        this.other_store += this.other_pits[pit];
-        this.other_pits[pit] = 0;
+    if (player_1_out && !player_2_out) {
+      for (pit = p1_lower; pit <= p1_upper; pit++) {
+        const inverse = pit + 7 % this.current_pits.length
+        this.current_pits[p1_upper+1] += this.current_pits[inverse];
+        this.current_pits[pit] = 0;
       }
 
-    } else if (other_player_out && !current_player_out) {
-      for (pit = 0; pit < 6; pit++) {
-        this.current_store += this.current_pits[pit];
+    } else if (player_2_out && !player_1_out) {
+      for (pit = p2_lower; pit <= p2_upper; pit++) {
+        const inverse = pit + 7 % this.current_pits.length
+        this.current_pits[p2_upper+1] += this.current_pits[inverse];
         this.current_pits[pit] = 0;
       }
     }
 
     this.game.draw_all_stones();
-
-    if (this.current_store > this.other_store) {
+    const p1_store = this.current_pits[this.get_store(true)]
+    const p2_store = this.current_pits[this.get_store(false)]
+    if (p1_store > p2_store) {
       // current player wins
-      return this.game.player === 'two' ? 2 : 1;
-
-    } else if (this.other_store > this.current_store) {
-      // other player wins
-      return this.game.player === 'two' ? 1 : 2;
+      return this.game.player === 'two' ? 2 : 1
 
     } else {
-      return 0;
+      return 0
     }
   };
 }

@@ -1,8 +1,8 @@
 
-import { Board } from "./Board";
+import { Board } from './Board';
 
 const format = (stones: number) => {
-  return stones === 0 ? null : stones + ""
+  return stones === 0 ? null : stones + ''
 }
 
 export class Game {
@@ -20,16 +20,16 @@ export class Game {
   }
 
   /**
-  * Refresh the query selectors and update pit stones
-  */
+   * Refresh the query selectors and update pit stones
+   */
   public init(){
     this.refresh_queries()
     this.draw_all_stones()
   }
   /**
-	 * Retrieve the name of the player not currently having a turn
-	 * @return {String}
-	 */
+	  * Retrieve the name of the player not currently having a turn
+	  * @return {String}
+	  */
 	public get_other_player() {
 		return this.player === 'one' ? 'two' : 'one'
 	}
@@ -52,11 +52,11 @@ export class Game {
 	public do_player_turn(pit: number) {
 
 		// perform the player's action
-		let turn_over = this.board.move_stones(pit)
+		const turn_over = this.board.move_stones(pit)
 
 		// make sure that a player hasn't run out of stones
 		if (this.check_game_over()) {
-			//this.reset_game()
+			// this.reset_game()
 			return true
 		}
 
@@ -65,7 +65,7 @@ export class Game {
 			this.switch_turn()
 		}
 
-		//this.save_game()
+		// this.save_game()
 		return false
 	}
 
@@ -74,14 +74,14 @@ export class Game {
 	 */
 	public switch_turn() {
 		this.player = this.get_other_player()
-		this.board.flip_board()
+	//	this.board.flip_board()
 		this.refresh_queries()
 		this.draw_all_stones()
 
-		let player = this.player
-		setTimeout(function () {
+		const player = this.player
+    setTimeout(() => {
       document.body.setAttribute('data-player', player)
-      let current_player = document.querySelector('.current-player')
+      const current_player = document.querySelector('.current-player')
 			if(current_player){
         current_player.textContent = player
       }
@@ -93,14 +93,14 @@ export class Game {
 	 * @returns {Boolean} Whether the game is over
 	 */
 	public check_game_over() {
-		let winner = this.board.check_winner()
+		const winner = this.board.check_winner()
 
 		if (winner < 0) {
 			return false
 		}
 
 		document.body.classList.add('game-over')
-		let status = document.querySelector('.status')
+		const status = document.querySelector('.status')
 
     // Determine which player holds the most stones
     if (status){
@@ -116,14 +116,13 @@ export class Game {
 		this.player = ''
 		return true
   }
-  
   /**
    * Update the stones on the page
    */
   public draw_all_stones() {
     if(this.current_player_store)
       this.current_player_store.textContent = format(this.board.current_store)
-    
+
 
     if(this.other_player_store)
       this.other_player_store.textContent = format(this.board.other_store)

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Board_1 = require("./Board");
 var format = function (stones) {
-    return stones === 0 ? null : stones + "";
+    return stones === 0 ? null : stones + '';
 };
 var Game = (function () {
     function Game() {

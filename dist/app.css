@@ -93,6 +93,7 @@ h1 {
 
 .store p, .pit p {
   cursor: inherit;
+  pointer-events:none; touch-action:none;
 }
 
 .store p::-moz-selection, .pit p::-moz-selection {
