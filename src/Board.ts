@@ -52,6 +52,7 @@ export class Board {
   public move_stones(pit: number) {
     pit = this.turn_player_1 ? pit : pit + 7
     const current_store_idx = this.get_store_index(this.turn_player_1)
+    const other_store_idx = this.get_store_index(!this.turn_player_1)
     // return if pit has no stones
     if (this.get_stones(pit) < 1) {
       return false;
@@ -63,12 +64,11 @@ export class Board {
     this.game.draw_stones(pit);
 
     while (stones > 0) {
-      ++pit;
+      pit = (pit + 1) % this.current_pits.length;
 
-      
       // wrap around the board before reaching other player's store
-      if (pit > 13) {
-        pit = 0;
+      if (pit == other_store_idx) {
+        pit = (other_store_idx + 1) % this.current_pits.length;
       }
 
       this.add_stones(pit, 1);
@@ -158,7 +158,7 @@ export class Board {
     };
 
     const player_1_out = is_row_empty( this.turn_player_1);
-    const player_2_out   = is_row_empty(!this.turn_player_1);
+    const player_2_out = is_row_empty(!this.turn_player_1);
 
     // the game is not over if neither player has an empty row
     if (!player_1_out && !player_2_out) {

@@ -18,6 +18,7 @@ var Board = (function () {
     Board.prototype.move_stones = function (pit) {
         pit = this.turn_player_1 ? pit : pit + 7;
         var current_store_idx = this.get_store_index(this.turn_player_1);
+        var other_store_idx = this.get_store_index(!this.turn_player_1);
         if (this.get_stones(pit) < 1) {
             return false;
         }
@@ -25,9 +26,9 @@ var Board = (function () {
         this.set_stones(pit, 0);
         this.game.draw_stones(pit);
         while (stones > 0) {
-            ++pit;
-            if (pit > 13) {
-                pit = 0;
+            pit = (pit + 1) % this.current_pits.length;
+            if (pit == other_store_idx) {
+                pit = (other_store_idx + 1) % this.current_pits.length;
             }
             this.add_stones(pit, 1);
             stones--;
