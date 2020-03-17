@@ -16,7 +16,8 @@ var Board = (function () {
         this.current_pits[pit] += stones;
     };
     Board.prototype.move_stones = function (pit) {
-        var current_store = this.get_store(this.turn_player_1);
+        pit = this.turn_player_1 ? pit : pit + 7;
+        var current_store_idx = this.get_store_index(this.turn_player_1);
         if (this.get_stones(pit) < 1) {
             return false;
         }
@@ -25,27 +26,36 @@ var Board = (function () {
         this.game.draw_stones(pit);
         while (stones > 0) {
             ++pit;
-            if (pit > 12) {
+            if (pit > 13) {
                 pit = 0;
             }
             this.add_stones(pit, 1);
             stones--;
             this.game.draw_stones(pit);
         }
-        var inverse = pit + 7 % this.current_pits.length;
-        if (pit < 6 && this.current_pits[pit] === 1 && this.current_pits[inverse] > 0) {
-            this.current_pits[current_store] += this.current_pits[inverse] + 1;
-            this.game.draw_stones(6);
+        var inverse = (5 - pit + 7) % this.current_pits.length;
+        var is_capturable = this.is_within_player_bounds(pit, this.turn_player_1);
+        if (is_capturable && this.current_pits[pit] === 1 && this.current_pits[inverse] > 0) {
+            this.current_pits[current_store_idx] += this.current_pits[inverse] + 1;
+            this.game.draw_stones(current_store_idx);
             this.current_pits[pit] = 0;
             this.current_pits[inverse] = 0;
             this.game.draw_stones(pit);
-            this.game.draw_stones(12 - pit);
+            this.game.draw_stones(inverse);
         }
-        return pit !== 6;
+        return pit !== current_store_idx;
     };
-    Board.prototype.get_store = function (player_turn) {
+    Board.prototype.get_store_index = function (player_turn) {
         var half = (this.current_pits.length / 2) - 1;
         return player_turn ? half : half * 2 + 1;
+    };
+    Board.prototype.get_store = function (player_turn) {
+        var idx = this.get_store_index(player_turn);
+        return this.current_pits[idx];
+    };
+    Board.prototype.get_offset = function (player_turn) {
+        var half = (this.current_pits.length / 2) - 1;
+        return player_turn ? 0 : half + 1;
     };
     Board.prototype.get_side_length = function () {
         return this.current_pits.length / 2 - 1;
@@ -53,6 +63,15 @@ var Board = (function () {
     Board.prototype.get_board_index = function (board) {
         return [0, this.get_side_length(),
             this.get_side_length() + 1, this.current_pits.length - 1];
+    };
+    Board.prototype.is_within_player_bounds = function (pit, player_1) {
+        var _a = this.get_board_index(this.current_pits), p1_lower = _a[0], p1_upper = _a[1], p2_lower = _a[2], p2_upper = _a[3];
+        if (player_1) {
+            return (pit >= p1_lower && pit < p1_upper);
+        }
+        else {
+            return (pit >= p2_lower && pit < p2_upper);
+        }
     };
     Board.prototype.get_board_slice = function (player_turn, board) {
         return player_turn
@@ -87,10 +106,10 @@ var Board = (function () {
             }
         }
         this.game.draw_all_stones();
-        var p1_store = this.current_pits[this.get_store(true)];
-        var p2_store = this.current_pits[this.get_store(false)];
+        var p1_store = this.get_store(true);
+        var p2_store = this.get_store(false);
         if (p1_store > p2_store) {
-            return this.game.player === 'two' ? 2 : 1;
+            return this.turn_player_1 ? 1 : 2;
         }
         else {
             return 0;

@@ -38,16 +38,6 @@ h1 {
 	overflow-x: auto;
 	background: url(../images/wood.png);
 	border-radius: 20px;
-
-	&, p {
-		transform: rotate(0deg);
-		transition: transform 3s ease 0s;
-	}
-
-	[data-player="two"] &,
-	[data-player="two"] & p {
-		transform: rotate(180deg);
-	}
 }
 
 .rows {
@@ -81,6 +71,7 @@ h1 {
 
 	p {
 		cursor: inherit;
+		pointer-events:none; touch-action:none;
 	}
 
 	p::selection {

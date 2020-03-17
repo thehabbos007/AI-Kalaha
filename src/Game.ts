@@ -7,17 +7,20 @@ const format = (stones: number) => {
 
 export class Game {
   board: Board
-  player: string = 'one'
-  current_player_store = document.querySelector('.store.player-' + this.player + ' p')
-  current_player_pits = document.querySelectorAll('.row.player-' + this.player + ' .pit p')
+  current_player_store = document.querySelector('.store.player-one p')
+  current_player_pits = document.querySelectorAll('.row.player-one .pit p')
 
-  other_player_store = document.querySelector('.store.player-' + this.get_other_player() + ' p')
-  other_player_pits = document.querySelectorAll('.row.player-' + this.get_other_player() + ' .pit p')
+  other_player_store = document.querySelector('.store.player-two p')
+  other_player_pits = document.querySelectorAll('.row.player-two .pit p')
 
 
   constructor() {
     this.board = new Board(this)
   }
+
+  get player_text () {
+    return this.board.turn_player_1 ? 'one' : 'two';
+  } 
 
   /**
    * Refresh the query selectors and update pit stones
@@ -31,17 +34,18 @@ export class Game {
 	  * @return {String}
 	  */
 	public get_other_player() {
-		return this.player === 'one' ? 'two' : 'one'
+		return !this.board.turn_player_1
 	}
 
 	/**
 	 * Run the query selectors for the pits
 	 */
 	public refresh_queries() {
-		this.current_player_pits = document.querySelectorAll('.row.player-' + this.player + ' .pit p')
-		this.other_player_pits = document.querySelectorAll('.row.player-' + this.get_other_player() + ' .pit p')
-		this.current_player_store = document.querySelector('.store.player-' + this.player + ' p')
-		this.other_player_store = document.querySelector('.store.player-' + this.get_other_player() + ' p')
+		this.current_player_pits = document.querySelectorAll('.row.player-one .pit p')
+    this.current_player_store = document.querySelector('.store.player-one p')
+    
+		this.other_player_pits = document.querySelectorAll('.row.player-two .pit p')
+		this.other_player_store = document.querySelector('.store.player-two p')
 	}
 
 	/**
@@ -50,7 +54,7 @@ export class Game {
 	 * @returns {Boolean} true if the game is now over
 	 */
 	public do_player_turn(pit: number) {
-
+    debugger;
 		// perform the player's action
 		const turn_over = this.board.move_stones(pit)
 
@@ -73,19 +77,18 @@ export class Game {
 	 * Change the user currently having a turn
 	 */
 	public switch_turn() {
-		this.player = this.get_other_player()
+		this.board.turn_player_1 = this.get_other_player()
 	//	this.board.flip_board()
-		this.refresh_queries()
-		this.draw_all_stones()
+		//this.refresh_queries()
+    this.draw_all_stones()
 
-		const player = this.player
     setTimeout(() => {
-      document.body.setAttribute('data-player', player)
+      document.body.setAttribute('data-player', this.player_text)
       const current_player = document.querySelector('.current-player')
 			if(current_player){
-        current_player.textContent = player
+        current_player.textContent = this.player_text
       }
-		}, 700 )
+		}, 400 )
 	}
 
 	/**
@@ -113,39 +116,49 @@ export class Game {
       }
     }
 
-		this.player = ''
+		this.board.turn_player_1 = true
 		return true
   }
   /**
    * Update the stones on the page
    */
   public draw_all_stones() {
-    if(this.current_player_store)
-      this.current_player_store.textContent = format(this.board.current_store)
+    let current_store = this.board.get_store(true)
+    let other_store = this.board.get_store(false)
 
+    let current_offset = this.board.get_offset(true)
+    let other_offset = this.board.get_offset(false)
+
+    if(this.current_player_store)
+      this.current_player_store.textContent = format(current_store)
 
     if(this.other_player_store)
-      this.other_player_store.textContent = format(this.board.other_store)
+      this.other_player_store.textContent = format(other_store)
 
     for (let pit = 0; pit < 6; pit++) {
-        this.current_player_pits[pit].textContent = format(this.board.current_pits[pit])
-        this.other_player_pits[pit].textContent = format(this.board.other_pits[pit])
+        this.current_player_pits[pit].textContent = format(this.board.current_pits[current_offset+pit])
+        this.other_player_pits[pit].textContent = format(this.board.current_pits[other_offset+pit])
     }
   }
 
   public draw_stones(pit: number) {
+    let current_store = this.board.get_store(true)
+    let other_store = this.board.get_store(false)
+
+    let current_offset = this.board.get_offset(true)
+    let other_offset = this.board.get_offset(false)
 
     if (pit === 6) {
       if(this.current_player_store)
-        this.current_player_store.textContent = format(this.board.current_store)
+        this.current_player_store.textContent = format(current_store)
     } else if(pit === 13) {
       if(this.other_player_store)
-        this.other_player_store.textContent = format(this.board.other_store)
+        this.other_player_store.textContent = format(other_store)
     } else if (pit < 6) {
-        this.current_player_pits[pit].textContent = format(this.board.current_pits[pit])
+        this.current_player_pits[pit].textContent = format(this.board.current_pits[current_offset+pit])
     } else if (pit > 6) {
         pit -= 7
-        this.other_player_pits[pit].textContent = format(this.board.other_pits[pit])
+        this.other_player_pits[pit].textContent = format(this.board.current_pits[other_offset+pit])
     }
 }
 }

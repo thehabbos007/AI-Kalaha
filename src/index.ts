@@ -3,7 +3,6 @@ import { Game } from "./Game";
 
 const game = new Game();
 // game.load_game();
-
 game.init();
 let waiting_for_move = true;
 
@@ -15,10 +14,10 @@ let waiting_for_move = true;
 const init_pits = (player: string, row: NodeList) => {
   const onclick = (e: Event) => {
     const target = (e.target as HTMLInputElement);
-    if (game.player === player && waiting_for_move) {
+    const player_id = player === 'one'
+    if (game.board.turn_player_1 === player_id && waiting_for_move) {
       waiting_for_move = false;
       const pit = parseInt(target.getAttribute('data-pit')?? '0', 10);
-      console.log(pit)
       if (!game.do_player_turn(pit)) {
         waiting_for_move = true;
       }

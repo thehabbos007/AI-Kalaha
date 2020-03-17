@@ -50,7 +50,8 @@ export class Board {
    * @return {Boolean} Whether the user's turn has ended
    */
   public move_stones(pit: number) {
-    const current_store = this.get_store(this.turn_player_1)
+    pit = this.turn_player_1 ? pit : pit + 7
+    const current_store_idx = this.get_store_index(this.turn_player_1)
     // return if pit has no stones
     if (this.get_stones(pit) < 1) {
       return false;
@@ -64,8 +65,9 @@ export class Board {
     while (stones > 0) {
       ++pit;
 
+      
       // wrap around the board before reaching other player's store
-      if (pit > 12) {
+      if (pit > 13) {
         pit = 0;
       }
 
@@ -75,29 +77,39 @@ export class Board {
     }
 
     // Invert the pit number (number of opposite pit in opponent's row)
-    const inverse = pit + 7 % this.current_pits.length
-
+    const inverse = (5 - pit + 7) % this.current_pits.length
+    const is_capturable = this.is_within_player_bounds(pit, this.turn_player_1);
     // Check for capture
-    if (pit < 6 && this.current_pits[pit] === 1 && this.current_pits[inverse] > 0) {
+    if (is_capturable && this.current_pits[pit] === 1 && this.current_pits[inverse] > 0) {
 
       // Transfer this pit's stones along with opposite pit's stones to store
-      this.current_pits[current_store] += this.current_pits[inverse] + 1;
-      this.game.draw_stones(6);
+      this.current_pits[current_store_idx] += this.current_pits[inverse] + 1;
+      this.game.draw_stones(current_store_idx);
 
       // Clear the pits
       this.current_pits[pit] = 0;
       this.current_pits[inverse] = 0;
       this.game.draw_stones(pit);
-      this.game.draw_stones(12 - pit);
+      this.game.draw_stones(inverse);
     }
 
     // the user's turn ended if the stones did not end in the storage pit
-    return pit !== 6;
+    return pit !== current_store_idx;
+  }
+
+  public get_store_index(player_turn: boolean): number {
+    const half = (this.current_pits.length / 2) - 1
+    return player_turn ? half : half * 2 + 1
   }
 
   public get_store(player_turn: boolean): number {
+    const idx = this.get_store_index(player_turn);
+    return this.current_pits[idx]
+  }
+
+  public get_offset(player_turn: boolean): number {
     const half = (this.current_pits.length / 2) - 1
-    return player_turn ? half : half * 2 + 1
+    return player_turn ? 0 : half + 1
   }
 
   public get_side_length() {
@@ -110,6 +122,16 @@ export class Board {
   public get_board_index(board: number[]): number[] {
       return [0, this.get_side_length(),
              this.get_side_length()+1, this.current_pits.length-1]
+  }
+
+  public is_within_player_bounds(pit: number, player_1: boolean): boolean{
+    const [p1_lower, p1_upper, p2_lower, p2_upper] = this.get_board_index(this.current_pits)
+
+    if(player_1){
+      return (pit >= p1_lower && pit < p1_upper)
+    }else{
+      return (pit >= p2_lower && pit < p2_upper)
+    }
   }
 
   public get_board_slice(player_turn: boolean, board: number[]) : number[] {
@@ -163,11 +185,11 @@ export class Board {
     }
 
     this.game.draw_all_stones();
-    const p1_store = this.current_pits[this.get_store(true)]
-    const p2_store = this.current_pits[this.get_store(false)]
+    const p1_store = this.get_store(true)
+    const p2_store = this.get_store(false)
     if (p1_store > p2_store) {
       // current player wins
-      return this.game.player === 'two' ? 2 : 1
+      return this.turn_player_1 ? 1 : 2
 
     } else {
       return 0
