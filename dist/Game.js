@@ -33,7 +33,6 @@ var Game = (function () {
         this.other_player_store = document.querySelector('.store.player-two p');
     };
     Game.prototype.do_player_turn = function (pit) {
-        debugger;
         var turn_over = this.board.move_stones(pit);
         if (this.check_game_over()) {
             return true;
@@ -53,7 +52,7 @@ var Game = (function () {
             if (current_player) {
                 current_player.textContent = _this.player_text;
             }
-        }, 400);
+        }, 200);
     };
     Game.prototype.check_game_over = function () {
         var winner = this.board.check_winner();
@@ -65,11 +64,14 @@ var Game = (function () {
         if (status) {
             if (1 === winner) {
                 status.textContent = 'Player one wins!';
+                document.body.setAttribute('data-player', 'one');
             }
             else if (2 === winner) {
                 status.textContent = 'Player two wins!';
+                document.body.setAttribute('data-player', 'two');
             }
             else {
+                document.body.setAttribute('data-player', '');
                 status.textContent = 'Draw!';
             }
         }

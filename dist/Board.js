@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Board = (function () {
     function Board(game) {
         this.game = game;
-        this.current_pits = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+        this.current_pits = [1, 4, 1, 0, 4, 4, 25, 0, 0, 0, 0, 0, 1, 25];
         this.turn_player_1 = true;
     }
     Board.prototype.get_stones = function (pit) {
@@ -85,36 +85,33 @@ var Board = (function () {
             return _this.get_board_slice(player, _this.current_pits)
                 .every(function (stones) { return stones === 0; });
         };
-        var player_1_out = is_row_empty(this.turn_player_1);
-        var player_2_out = is_row_empty(!this.turn_player_1);
+        var player_1_out = is_row_empty(true);
+        var player_2_out = is_row_empty(false);
+        var p1_store_idx = this.get_store_index(true);
+        var p2_store_idx = this.get_store_index(false);
         if (!player_1_out && !player_2_out) {
             return -1;
         }
         var pit;
         var _a = this.get_board_index(this.current_pits), p1_lower = _a[0], p1_upper = _a[1], p2_lower = _a[2], p2_upper = _a[3];
         if (player_1_out && !player_2_out) {
-            for (pit = p1_lower; pit <= p1_upper; pit++) {
-                var inverse = pit + 7 % this.current_pits.length;
-                this.current_pits[p1_upper + 1] += this.current_pits[inverse];
+            for (pit = p2_lower; pit < p2_upper; pit++) {
+                this.current_pits[p2_store_idx] += this.current_pits[pit];
                 this.current_pits[pit] = 0;
             }
         }
         else if (player_2_out && !player_1_out) {
-            for (pit = p2_lower; pit <= p2_upper; pit++) {
-                var inverse = pit + 7 % this.current_pits.length;
-                this.current_pits[p2_upper + 1] += this.current_pits[inverse];
+            for (pit = p1_lower; pit < p1_upper; pit++) {
+                this.current_pits[p1_store_idx] += this.current_pits[pit];
                 this.current_pits[pit] = 0;
             }
         }
         this.game.draw_all_stones();
         var p1_store = this.get_store(true);
         var p2_store = this.get_store(false);
-        if (p1_store > p2_store) {
-            return this.turn_player_1 ? 1 : 2;
-        }
-        else {
+        if (p1_store == p2_store)
             return 0;
-        }
+        return p1_store > p2_store ? 1 : 2;
     };
     ;
     return Board;

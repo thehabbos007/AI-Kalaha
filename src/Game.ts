@@ -54,7 +54,6 @@ export class Game {
 	 * @returns {Boolean} true if the game is now over
 	 */
 	public do_player_turn(pit: number) {
-    debugger;
 		// perform the player's action
 		const turn_over = this.board.move_stones(pit)
 
@@ -88,7 +87,7 @@ export class Game {
 			if(current_player){
         current_player.textContent = this.player_text
       }
-		}, 400 )
+		}, 200 )
 	}
 
 	/**
@@ -109,9 +108,12 @@ export class Game {
     if (status){
       if (1 === winner) {
         status.textContent = 'Player one wins!'
+        document.body.setAttribute('data-player', 'one')
       } else if (2 === winner) {
         status.textContent = 'Player two wins!'
+        document.body.setAttribute('data-player', 'two')
       } else {
+        document.body.setAttribute('data-player', '')
         status.textContent = 'Draw!'
       }
     }

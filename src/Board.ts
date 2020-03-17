@@ -14,6 +14,7 @@ export class Board {
   constructor(game: Game) {
     this.game = game
     this.current_pits = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]
+    //this.current_pits = [1, 4,1,0, 4, 4, 25, 0, 0, 0, 0, 0, 1, 25]
     this.turn_player_1 = true;
   }
 
@@ -157,8 +158,11 @@ export class Board {
                  .every((stones: number) => stones === 0);
     };
 
-    const player_1_out = is_row_empty( this.turn_player_1);
-    const player_2_out = is_row_empty(!this.turn_player_1);
+    const player_1_out = is_row_empty(true);
+    const player_2_out = is_row_empty(false);
+    const p1_store_idx = this.get_store_index(true)
+    const p2_store_idx = this.get_store_index(false)
+
 
     // the game is not over if neither player has an empty row
     if (!player_1_out && !player_2_out) {
@@ -170,16 +174,14 @@ export class Board {
     const [p1_lower, p1_upper, p2_lower, p2_upper] = this.get_board_index(this.current_pits)
 
     if (player_1_out && !player_2_out) {
-      for (pit = p1_lower; pit <= p1_upper; pit++) {
-        const inverse = pit + 7 % this.current_pits.length
-        this.current_pits[p1_upper+1] += this.current_pits[inverse];
+      for (pit = p2_lower; pit < p2_upper; pit++) {
+        this.current_pits[p2_store_idx] += this.current_pits[pit];
         this.current_pits[pit] = 0;
       }
 
     } else if (player_2_out && !player_1_out) {
-      for (pit = p2_lower; pit <= p2_upper; pit++) {
-        const inverse = pit + 7 % this.current_pits.length
-        this.current_pits[p2_upper+1] += this.current_pits[inverse];
+      for (pit = p1_lower; pit < p1_upper; pit++) {
+        this.current_pits[p1_store_idx] += this.current_pits[pit];
         this.current_pits[pit] = 0;
       }
     }
@@ -187,12 +189,9 @@ export class Board {
     this.game.draw_all_stones();
     const p1_store = this.get_store(true)
     const p2_store = this.get_store(false)
-    if (p1_store > p2_store) {
-      // current player wins
-      return this.turn_player_1 ? 1 : 2
-
-    } else {
-      return 0
-    }
+    
+    if (p1_store == p2_store)
+        return 0;
+    return p1_store > p2_store ? 1 : 2;
   };
 }
