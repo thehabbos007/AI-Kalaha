@@ -5,7 +5,9 @@ var format = function (stones) {
     return stones === 0 ? null : stones + '';
 };
 var Game = (function () {
-    function Game() {
+    function Game(enable_render) {
+        if (enable_render === void 0) { enable_render = true; }
+        this.enable_render = enable_render;
         this.current_player_store = document.querySelector('.store.player-one p');
         this.current_player_pits = document.querySelectorAll('.row.player-one .pit p');
         this.other_player_store = document.querySelector('.store.player-two p');
@@ -20,6 +22,8 @@ var Game = (function () {
         configurable: true
     });
     Game.prototype.init = function () {
+        if (!this.enable_render)
+            return;
         this.refresh_queries();
         this.draw_all_stones();
     };
@@ -59,9 +63,9 @@ var Game = (function () {
         if (winner < 0) {
             return false;
         }
-        document.body.classList.add('game-over');
         var status = document.querySelector('.status');
-        if (status) {
+        if (this.enable_render && status) {
+            document.body.classList.add('game-over');
             if (1 === winner) {
                 status.textContent = 'Player one wins!';
                 document.body.setAttribute('data-player', 'one');
@@ -79,6 +83,8 @@ var Game = (function () {
         return true;
     };
     Game.prototype.draw_all_stones = function () {
+        if (!this.enable_render)
+            return;
         var current_store = this.board.get_store(true);
         var other_store = this.board.get_store(false);
         var current_offset = this.board.get_offset(true);
@@ -93,6 +99,8 @@ var Game = (function () {
         }
     };
     Game.prototype.draw_stones = function (pit) {
+        if (!this.enable_render)
+            return;
         var current_store = this.board.get_store(true);
         var other_store = this.board.get_store(false);
         var current_offset = this.board.get_offset(true);

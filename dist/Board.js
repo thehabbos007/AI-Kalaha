@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Board = (function () {
     function Board(game) {
         this.game = game;
-        this.current_pits = [1, 4, 1, 0, 4, 4, 25, 0, 0, 0, 0, 0, 1, 25];
+        this.current_pits = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
         this.turn_player_1 = true;
     }
     Board.prototype.get_stones = function (pit) {

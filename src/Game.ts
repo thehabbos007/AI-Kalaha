@@ -14,7 +14,7 @@ export class Game {
   other_player_pits = document.querySelectorAll('.row.player-two .pit p')
 
 
-  constructor() {
+  constructor(private enable_render: boolean = true) {
     this.board = new Board(this)
   }
 
@@ -26,6 +26,7 @@ export class Game {
    * Refresh the query selectors and update pit stones
    */
   public init(){
+    if(!this.enable_render) return;
     this.refresh_queries()
     this.draw_all_stones()
   }
@@ -68,8 +69,7 @@ export class Game {
 			this.switch_turn()
 		}
 
-		// this.save_game()
-		return false
+    return false
 	}
 
 	/**
@@ -77,8 +77,6 @@ export class Game {
 	 */
 	public switch_turn() {
 		this.board.turn_player_1 = this.get_other_player()
-	//	this.board.flip_board()
-		//this.refresh_queries()
     this.draw_all_stones()
 
     setTimeout(() => {
@@ -101,11 +99,12 @@ export class Game {
 			return false
 		}
 
-		document.body.classList.add('game-over')
 		const status = document.querySelector('.status')
 
     // Determine which player holds the most stones
-    if (status){
+    if (this.enable_render && status){
+  		document.body.classList.add('game-over')
+
       if (1 === winner) {
         status.textContent = 'Player one wins!'
         document.body.setAttribute('data-player', 'one')
@@ -125,6 +124,8 @@ export class Game {
    * Update the stones on the page
    */
   public draw_all_stones() {
+    if(!this.enable_render) return;
+
     let current_store = this.board.get_store(true)
     let other_store = this.board.get_store(false)
 
@@ -144,6 +145,8 @@ export class Game {
   }
 
   public draw_stones(pit: number) {
+    if(!this.enable_render) return;
+   
     let current_store = this.board.get_store(true)
     let other_store = this.board.get_store(false)
 
