@@ -1,9 +1,11 @@
 import { Game } from "./Game";
-
+import { Agent } from "./Agent";
 
 const game = new Game();
 // game.load_game();
 game.init();
+const agent = new Agent(game.board)
+
 let waiting_for_move = true;
 
 /**
@@ -39,3 +41,8 @@ if(newGame)
     // game.reset_game();
     window.location.reload();
   })
+
+document.getElementById("AI")?.addEventListener('click', function(e) {
+  if(!game.board.turn_player_1)
+    console.log(agent.move())
+})
