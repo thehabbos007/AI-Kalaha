@@ -13,7 +13,7 @@ const do_move = (acc: number[]) => {
   if(!game.board.turn_player_1){
     setTimeout(() => {
       do_move([...acc, move])
-    }, 1000)
+    }, 600)
   }else{
     waiting_for_move = true
     console.log([...acc, move]);
