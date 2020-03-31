@@ -6,10 +6,22 @@
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fontdiner+Swanky|Roboto+Slab">
 	<link rel="stylesheet" href="dist/app.css">
 </head>
-<body data-player="one">
+<body>
 	<h1>Mancala</h1>
-	<span id="AI">AI lezgo</span>
-
+	<center>
+		<h2>Enable AI</h2>
+		<label class="eyeToggle">		
+			<input id="AI" type="checkbox" />  
+			
+			<div class="toggle">    
+			  <span class="eye">
+				<span class="topLid"></span>
+				<span class="pupil"></span>
+				<span class="bottomLid"></span>      
+			  </span>    
+			</div>  
+		</label>
+	</center>
 	<div class="board">
 		<div class="player-two store"><p></p></div>
 
@@ -36,9 +48,11 @@
 		<div class="player-one store"><p></p></div>
 	</div>
 
-	<p class="status">It is player <span class="current-player">one</span>'s turn</p>
-
-	<button class="new-game">New Game</button>
+	<center>
+		<p class="status" data-player="one">It is player <span class="current-player">one</span>'s turn</p>
+	
+		<button class="new-game">New Game</button>
+	</center>
 	<script src="dist/index.js"></script>
 </body>
 </html>

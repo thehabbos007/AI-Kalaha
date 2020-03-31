@@ -12,8 +12,12 @@ var Game = (function () {
         this.current_player_pits = document.querySelectorAll('.row.player-one .pit p');
         this.other_player_store = document.querySelector('.store.player-two p');
         this.other_player_pits = document.querySelectorAll('.row.player-two .pit p');
+        this.new_round_callback = function () { };
         this.board = new Board_1.Board(this);
     }
+    Game.prototype.enableAi = function (callback) {
+        this.new_round_callback = callback;
+    };
     Object.defineProperty(Game.prototype, "player_text", {
         get: function () {
             return this.board.turn_player_1 ? 'one' : 'two';
@@ -43,15 +47,19 @@ var Game = (function () {
         }
         if (turn_over) {
             this.switch_turn();
+            this.new_round_callback();
         }
         return false;
     };
     Game.prototype.switch_turn = function () {
         var _this = this;
         this.board.turn_player_1 = this.get_other_player();
+        if (!this.enable_render)
+            return;
         this.draw_all_stones();
         setTimeout(function () {
-            document.body.setAttribute('data-player', _this.player_text);
+            var _a;
+            (_a = document.querySelector('.status')) === null || _a === void 0 ? void 0 : _a.setAttribute('data-player', _this.player_text);
             var current_player = document.querySelector('.current-player');
             if (current_player) {
                 current_player.textContent = _this.player_text;
@@ -59,6 +67,7 @@ var Game = (function () {
         }, 200);
     };
     Game.prototype.check_game_over = function () {
+        var _a, _b, _c;
         var winner = this.board.check_winner();
         if (winner < 0) {
             return false;
@@ -68,14 +77,14 @@ var Game = (function () {
             document.body.classList.add('game-over');
             if (1 === winner) {
                 status.textContent = 'Player one wins!';
-                document.body.setAttribute('data-player', 'one');
+                (_a = document.querySelector('.status')) === null || _a === void 0 ? void 0 : _a.setAttribute('data-player', 'one');
             }
             else if (2 === winner) {
                 status.textContent = 'Player two wins!';
-                document.body.setAttribute('data-player', 'two');
+                (_b = document.querySelector('.status')) === null || _b === void 0 ? void 0 : _b.setAttribute('data-player', 'two');
             }
             else {
-                document.body.setAttribute('data-player', '');
+                (_c = document.querySelector('.status')) === null || _c === void 0 ? void 0 : _c.setAttribute('data-player', '');
                 status.textContent = 'Draw!';
             }
         }

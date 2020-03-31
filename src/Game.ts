@@ -1,5 +1,5 @@
 
-import { Board } from './Board';
+import { Board } from './Board'
 
 const format = (stones: number) => {
   return stones === 0 ? null : stones + ''
@@ -12,21 +12,25 @@ export class Game {
 
   other_player_store = document.querySelector('.store.player-two p')
   other_player_pits = document.querySelectorAll('.row.player-two .pit p')
+  new_round_callback: (() => void) = () => {};
 
-
-  constructor(private enable_render: boolean = true) {
+  constructor(public enable_render = true) {
     this.board = new Board(this)
   }
 
+  enableAi(callback: (() => void)) {
+    this.new_round_callback = callback;
+  }
+
   get player_text () {
-    return this.board.turn_player_1 ? 'one' : 'two';
+    return this.board.turn_player_1 ? 'one' : 'two'
   } 
 
   /**
    * Refresh the query selectors and update pit stones
    */
   public init(){
-    if(!this.enable_render) return;
+    if(!this.enable_render) return
     this.refresh_queries()
     this.draw_all_stones()
   }
@@ -66,7 +70,8 @@ export class Game {
 
 		// change the player if the current turn is ended
 		if (turn_over) {
-			this.switch_turn()
+      this.switch_turn()
+      this.new_round_callback()
 		}
 
     return false
@@ -76,16 +81,17 @@ export class Game {
 	 * Change the user currently having a turn
 	 */
 	public switch_turn() {
-		this.board.turn_player_1 = this.get_other_player()
+    this.board.turn_player_1 = this.get_other_player()
+    if(!this.enable_render) return;
     this.draw_all_stones()
 
     setTimeout(() => {
-      document.body.setAttribute('data-player', this.player_text)
+      document.querySelector('.status')?.setAttribute('data-player', this.player_text)
       const current_player = document.querySelector('.current-player')
 			if(current_player){
         current_player.textContent = this.player_text
       }
-		}, 200 )
+		}, 200)
 	}
 
 	/**
@@ -104,15 +110,15 @@ export class Game {
     // Determine which player holds the most stones
     if (this.enable_render && status){
   		document.body.classList.add('game-over')
-
+      
       if (1 === winner) {
         status.textContent = 'Player one wins!'
-        document.body.setAttribute('data-player', 'one')
+        document.querySelector('.status')?.setAttribute('data-player', 'one')
       } else if (2 === winner) {
         status.textContent = 'Player two wins!'
-        document.body.setAttribute('data-player', 'two')
+        document.querySelector('.status')?.setAttribute('data-player', 'two')
       } else {
-        document.body.setAttribute('data-player', '')
+        document.querySelector('.status')?.setAttribute('data-player', '')
         status.textContent = 'Draw!'
       }
     }
@@ -124,7 +130,7 @@ export class Game {
    * Update the stones on the page
    */
   public draw_all_stones() {
-    if(!this.enable_render) return;
+    if(!this.enable_render) return
 
     let current_store = this.board.get_store(true)
     let other_store = this.board.get_store(false)
@@ -145,7 +151,7 @@ export class Game {
   }
 
   public draw_stones(pit: number) {
-    if(!this.enable_render) return;
+    if(!this.enable_render) return
    
     let current_store = this.board.get_store(true)
     let other_store = this.board.get_store(false)

@@ -1,55 +1,68 @@
-import {Game} from './Game';
-import {Board} from './Board';
+import {Game} from './Game'
+import {Board} from './Board'
 
 // MinMax agent
 // Agent is always player 2 so far.
 export class Agent {
     depth = 5
-    
-    constructor(private board: Board) { }
+    first_print = 0
+    constructor(private original_board: Board) { }
 
     private clone_board(board: Board){
         let game_clone = new Game(false)
-        let board_clone = Object.assign({}, board)
-        board_clone.game = game_clone
+        let board_clone = board.clone(game_clone)
+        game_clone.board = board_clone
+        game_clone.enable_render = false
         return board_clone
     }
 
     public move(){
-        let cloned_board = this.clone_board(this.board)
+        let cloned_board = this.clone_board(this.original_board)
         let options = this.valid_moves(cloned_board)
 
         let scores = options.map(option => this.min_max(cloned_board, -Infinity, Infinity, option, this.depth))
+        console.info("Scores: ", scores)
 
         let max_score = Math.max(...scores)
 
-        let candidates: number[] = scores.map((score, i) => [score, options[i]])
-                               .filter(x => x[0] == max_score)
-                               .map(x => x[1])
+        let pairs: number[][] = scores.map((score, i) => [score, options[i]])
+
+        console.info("pairs: ", pairs)
+        let candidates: number[] = pairs.filter(x => x[0] == max_score)
+                                        .map(x => x[1])
+
         console.info("Candidates for next move: " + candidates)
 
         return candidates[Math.floor(Math.random() * candidates.length)]
     }
 
     private evaluate(board: Board): number{
-        return board.game.board.get_store(false) // Get player 2's store
+        // Find a differnce
+        let board_eval = board.get_store(false) - board.get_store(true)
+        this.first_print++
+        return board_eval
     }
 
     private valid_moves(board: Board): number[]{
-        // if it's player 2's pit, and the pit has more than 0 stones.
-        // [false,false,false,false,false,false,false,true,true,true,true,true,true,false]
-        // in initial state
+        let player = board.turn_player_1
+
+        let lower = player ? 0 : 7
+        let upper = player ? 5 : 12
+        let subtract = player ? 1 : 7
+
         return board.current_pits
-                    .map((x, i) => i >= 7 && i <= 12 && x > 0 ? i : -1)
-                    .filter(x => x > 0)
+            .map((x, i) => i >= lower && i <= upper && x > 0 ? i : -1)
+            .filter(x => x > 0)
+            .map(x => x - subtract)
     }
 
     private min_max(board: Board, alpha: number, beta: number, move: number, depth: number): number{
         let cloned_board = this.clone_board(board)
+        
         cloned_board.game.do_player_turn(move)
 
-        let is_maximiser = !board.turn_player_1
-        if(depth == 0) return this.evaluate(cloned_board)
+        let is_maximiser = !cloned_board.turn_player_1
+        if(depth == 0 || cloned_board.check_winner() > -1) return this.evaluate(cloned_board)
 
         let options = this.valid_moves(cloned_board)
         var best_option = is_maximiser ? -Infinity : Infinity
@@ -67,7 +80,7 @@ export class Agent {
             if(beta <= alpha) return best_option
 
         })
-
+        
         return best_option
     }
 
