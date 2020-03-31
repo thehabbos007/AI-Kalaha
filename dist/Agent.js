@@ -19,13 +19,10 @@ var Agent = (function () {
         var cloned_board = this.clone_board(this.original_board);
         var options = this.valid_moves(cloned_board);
         var scores = options.map(function (option) { return _this.min_max(cloned_board, -Infinity, Infinity, option, _this.depth); });
-        console.info("Scores: ", scores);
         var max_score = Math.max.apply(Math, scores);
         var pairs = scores.map(function (score, i) { return [score, options[i]]; });
-        console.info("pairs: ", pairs);
         var candidates = pairs.filter(function (x) { return x[0] == max_score; })
             .map(function (x) { return x[1]; });
-        console.info("Candidates for next move: " + candidates);
         return candidates[Math.floor(Math.random() * candidates.length)];
     };
     Agent.prototype.evaluate = function (board) {

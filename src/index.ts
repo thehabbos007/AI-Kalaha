@@ -7,22 +7,24 @@ const game = new Game()
 game.init()
 const agent = new Agent(game.board)
 
-const do_move = () => {
+const do_move = (acc: number[]) => {
   let move = agent.move()
   game.do_player_turn(move)
   if(!game.board.turn_player_1){
     setTimeout(() => {
-      do_move()
+      do_move([...acc, move])
     }, 1000)
   }else{
     waiting_for_move = true
+    console.log([...acc, move]);
   }
-
 }
 
 const do_ai_stuff = () => {
   if(!game.board.turn_player_1)
-    do_move()
+    setTimeout(() => {
+      do_move([])
+    }, 400);
 }
 
 const no_ai = () => {};

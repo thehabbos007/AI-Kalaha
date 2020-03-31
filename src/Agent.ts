@@ -21,18 +21,14 @@ export class Agent {
         let options = this.valid_moves(cloned_board)
 
         let scores = options.map(option => this.min_max(cloned_board, -Infinity, Infinity, option, this.depth))
-        console.info("Scores: ", scores)
 
         let max_score = Math.max(...scores)
 
         let pairs: number[][] = scores.map((score, i) => [score, options[i]])
 
-        console.info("pairs: ", pairs)
+        // console.info("pairs for one move: ", pairs)
         let candidates: number[] = pairs.filter(x => x[0] == max_score)
                                         .map(x => x[1])
-
-        console.info("Candidates for next move: " + candidates)
-
         return candidates[Math.floor(Math.random() * candidates.length)]
     }
 
