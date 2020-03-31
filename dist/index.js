@@ -67,6 +67,8 @@ checkbox === null || checkbox === void 0 ? void 0 : checkbox.addEventListener('c
         if (el.checked) {
             pit_click_state('two', document.querySelectorAll('.row.player-two .pit'), false);
             game.enableAi(do_ai_stuff);
+            if (!game.board.turn_player_1)
+                game.new_round_callback();
         }
         else {
             pit_click_state('two', document.querySelectorAll('.row.player-two .pit'), true);
