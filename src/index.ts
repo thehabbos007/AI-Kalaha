@@ -6,6 +6,13 @@ const game = new Game()
 // game.load_game()
 game.init()
 const agent = new Agent(game.board)
+const ai_move_span = document.getElementById("moves")
+
+const draw_ai_moves = (arr: number[]) =>{
+  console.log(arr)
+  if(ai_move_span)
+    ai_move_span.innerText = arr.join(" then ")
+}
 
 const do_move = (acc: number[]) => {
   let move = agent.move()
@@ -16,7 +23,7 @@ const do_move = (acc: number[]) => {
     }, 600)
   }else{
     waiting_for_move = true
-    console.log([...acc, move]);
+    draw_ai_moves([...acc, move])
   }
 }
 

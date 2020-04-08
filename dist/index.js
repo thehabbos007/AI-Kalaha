@@ -12,6 +12,12 @@ var Agent_1 = require("./Agent");
 var game = new Game_1.Game();
 game.init();
 var agent = new Agent_1.Agent(game.board);
+var ai_move_span = document.getElementById("moves");
+var draw_ai_moves = function (arr) {
+    console.log(arr);
+    if (ai_move_span)
+        ai_move_span.innerText = arr.join(" then ");
+};
 var do_move = function (acc) {
     var move = agent.move();
     game.do_player_turn(move);
@@ -22,7 +28,7 @@ var do_move = function (acc) {
     }
     else {
         waiting_for_move = true;
-        console.log(__spreadArrays(acc, [move]));
+        draw_ai_moves(__spreadArrays(acc, [move]));
     }
 };
 var do_ai_stuff = function () {
