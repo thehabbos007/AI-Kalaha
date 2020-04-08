@@ -5,7 +5,6 @@ var Agent = (function () {
     function Agent(original_board) {
         this.original_board = original_board;
         this.depth = 5;
-        this.first_print = 0;
     }
     Agent.prototype.clone_board = function (board) {
         var game_clone = new Game_1.Game(false);
@@ -27,7 +26,6 @@ var Agent = (function () {
     };
     Agent.prototype.evaluate = function (board) {
         var board_eval = board.get_store(false) - board.get_store(true);
-        this.first_print++;
         return board_eval;
     };
     Agent.prototype.valid_moves = function (board) {

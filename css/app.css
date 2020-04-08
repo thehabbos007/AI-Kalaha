@@ -10,7 +10,6 @@ html {
 
 body {
 	color: #555;
-	background: radial-gradient(circle, #fff 15%, #ccc);
 	background-size: cover;
 	font-size: 1rem;
 	font-family: Roboto Slab, sans-serif;
@@ -114,6 +113,14 @@ button {
 	}
 }
 /* EGG EYE*/
+.eye-stuff{
+  display: flex;
+  justify-content: space-between;
+  width: 350px;
+  margin: 0 auto;
+  align-items: center;
+}
+
 *,
 *:after,
 *:before {
@@ -165,7 +172,7 @@ button {
   position: relative;
   transition: 0.3s;
   overflow: hidden;
-  transform: translate(-50%,-2%);
+  /*transform: translate(-50%,-2%);*/
 }
 .eye:before {
   content: "";
@@ -224,7 +231,7 @@ button {
   background-color: #1b7ac3;
 }
 .eyeToggle input[type="checkbox"]:checked + .toggle .eye {
-  transform: translate(50%, -2%);
+  transform: translate(100%);
 }
 .eyeToggle input[type="checkbox"]:checked + .toggle .eye .topLid,
 .eyeToggle input[type="checkbox"]:checked + .toggle .eye .bottomLid {
