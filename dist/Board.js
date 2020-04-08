@@ -1,11 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Board = (function () {
-    function Board(game) {
+    function Board(game, current_pits, turn_player_1) {
+        if (current_pits === void 0) { current_pits = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]; }
+        if (turn_player_1 === void 0) { turn_player_1 = true; }
+        this.current_pits = current_pits;
+        this.turn_player_1 = turn_player_1;
         this.game = game;
-        this.current_pits = [1, 4, 1, 0, 4, 4, 25, 0, 0, 0, 0, 0, 1, 25];
-        this.turn_player_1 = true;
     }
+    Board.prototype.clone = function (game_clone) {
+        return new Board(game_clone, this.current_pits.slice(), this.turn_player_1);
+    };
     Board.prototype.get_stones = function (pit) {
         return this.current_pits[pit];
     };
@@ -113,7 +118,6 @@ var Board = (function () {
             return 0;
         return p1_store > p2_store ? 1 : 2;
     };
-    ;
     return Board;
 }());
 exports.Board = Board;

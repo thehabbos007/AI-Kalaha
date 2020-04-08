@@ -9,7 +9,6 @@ html {
 }
 
 body {
-	text-align: center;
 	color: #555;
 	background: radial-gradient(circle, #fff 15%, #ccc);
 	background-size: cover;
@@ -19,7 +18,8 @@ body {
 }
 
 h1 {
-	font-family: Fontdiner Swanky, sans-serif;
+	font-family: Roboto, sans-serif;
+	text-align: center;
 	font-size: 2rem;
 	letter-spacing: 4px;
 	margin: 0;
@@ -89,12 +89,12 @@ h1 {
 	cursor: pointer;
 }
 
-[data-player="two"] .status,
+.status[data-player="two"],
 .store.player-two, .player-two .pit {
 	color: green;
 }
 
-[data-player="one"] .status,
+.status[data-player="one"],
 .store.player-one, .player-one .pit {
 	color: #0074D9;
 }
@@ -112,4 +112,132 @@ button {
 		background: #fafafa;
 		color: #23282d;
 	}
+}
+/* EGG EYE*/
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+
+.eyeToggle {
+  margin: auto;
+  user-select: none;
+}
+.eyeToggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.toggle {
+  position: relative;
+  background-color: #505561;
+  width: 8em;
+  height: 4.25em;
+  border-radius: 2.125em;
+  line-height: 4.125em;
+  padding: 0 0.3125em;
+  box-shadow: inset 0 0.0625em 0.0625em 0.0625em rgba(0, 0, 0, 0.5), inset 0 0.125em 0 0.0625em black;
+  transition: 0.3s;
+  overflow: hidden;
+}
+.toggle:hover, .toggle:active {
+  background-color: #444953;
+}
+.toggle:before {
+  content: "";
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.eye {
+  display: inline-block;
+  vertical-align: middle;
+  background-image: linear-gradient(to bottom, #9ecef2, #ffffff);
+  box-shadow: 0 0.125em 0.1875em 0 black, inset 0 0 0.1875em 0.1875em rgba(24, 108, 172, 0.5);
+  border-radius: 50%;
+  width: 3.625em;
+  height: 3.625em;
+  position: relative;
+  transition: 0.3s;
+  overflow: hidden;
+  transform: translate(-50%,-2%);
+}
+.eye:before {
+  content: "";
+  position: absolute;
+  top: 0.1875em;
+  left: 50%;
+  width: 88%;
+  height: 80%;
+  margin-left: -44%;
+  border-radius: 50%;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0) 100%);
+  z-index: 3;
+}
+.eye .pupil {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 0.625em;
+  width: 0.625em;
+  margin-top: -0.3125em;
+  margin-left: -0.3125em;
+  border-radius: 50%;
+  background-color: #000;
+  box-shadow: inset -0.0625em -0.0625em 0.125em 0.0625em rgba(24, 108, 172, 0.5);
+  background-image: radial-gradient(ellipse at 40% 40%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 100%);
+}
+.eye .topLid {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 200%;
+  margin-left: -100%;
+  height: 1.875em;
+  background-color: #0b0c0d;
+  z-index: 1;
+  transition: 0.7s ease-out;
+  border-radius: 50% 50% 90% 90%;
+}
+.eye .bottomLid {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 0.9375em;
+  background-color: #0b0c0d;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 70%, rgba(255, 255, 255, 0) 100%);
+  z-index: 1;
+  transition: 0.5s;
+  border-radius: 50%;
+}
+
+.eyeToggle input[type="checkbox"]:checked + .toggle {
+  background-color: #1e88d9;
+}
+.eyeToggle input[type="checkbox"]:checked + .toggle:hover, .eyeToggle input[type="checkbox"]:checked + .toggle:active {
+  background-color: #1b7ac3;
+}
+.eyeToggle input[type="checkbox"]:checked + .toggle .eye {
+  transform: translate(50%, -2%);
+}
+.eyeToggle input[type="checkbox"]:checked + .toggle .eye .topLid,
+.eyeToggle input[type="checkbox"]:checked + .toggle .eye .bottomLid {
+  height: 0;
+  -moz-transition-delay: 0.2s;
+  -o-transition-delay: 0.2s;
+  -webkit-transition-delay: 0.2s;
+  transition-delay: 0.2s;
+}
+.eyeToggle input[type="checkbox"]:checked + .toggle .eye .pupil {
+  z-index: 5;
+  -moz-transition: 0 1s;
+  -o-transition: 0 1s;
+  -webkit-transition: 0 1s;
+  transition: 0 1s;
 }

@@ -5,7 +5,7 @@
   "homepage": "https://github.com/sheabunge/mancala",
   "scripts": {
     "test": "grunt jshint",
-    "build": "tsc && browserify -d ./src/index.ts -p tsify --outfile ./dist/index.js"
+    "build": "tsc && browserify -d ./src/index.ts -p tsify --outfile ./dist/kal.js"
   },
   "repository": {
     "type": "git",
