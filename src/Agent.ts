@@ -5,7 +5,6 @@ import {Board} from './Board'
 // Agent is always player 2 so far.
 export class Agent {
     depth = 5
-    first_print = 0
     constructor(private original_board: Board) { }
 
     private clone_board(board: Board){
@@ -33,9 +32,8 @@ export class Agent {
     }
 
     private evaluate(board: Board): number{
-        // Find a differnce
+        // Find the payoff of a terminal state
         let board_eval = board.get_store(false) - board.get_store(true)
-        this.first_print++
         return board_eval
     }
 
